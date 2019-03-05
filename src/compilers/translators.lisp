@@ -165,6 +165,31 @@
         (build-gate "RY"    '(#.(/ pi 2)) q0)
         (build-gate "RZ"    '(#.pi)       q0)))
 
+(define-translator CNS-to-iSWAP (("CNS" () q0 q1) cns-gate)
+  (list (build-gate "H"     ()             q1)
+        (build-gate "RZ"    '(#.(/ -pi 2)) q0)
+        (build-gate "RZ"    '(#.(/ -pi 2)) q1)
+        (build-gate "ISWAP" ()             q0 q1)
+        (build-gate "H"     ()             q0)))
+
+(define-translator CCNOT-to-CNS-and-CNOT (("CCNOT" () q0 q1 q2) ccnot-gate)
+  (list (build-gate "A"     ()             q2)
+        (build-gate "CNS"   ()             q1 q2)
+        (build-gate "B"     ()             q1)
+        (build-gate "D"     ()             q2)
+        (build-gate "CNS"   ()             q0 q1)
+        (build-gate "CNS"   ()             q1 q2)
+        (build-gate "Bd"    ()             q0)
+        (build-gate "Dd"    ()             q1)
+        (build-gate "CNOT"  ()             q2 q1)
+        (build-gate "CNS"   ()             q1 q0)
+        (build-gate "B"     ()             q1)
+        (build-gate "D"     ()             q2)
+        (build-gate "CNS"   ()             q2 q1)
+        (build-gate "C"     ()             q2)
+        (build-gate "CNOT"  ()             q0 q1)
+        (build-gate "CNS"   ()             q0 q1)))
+
 (defun find-shortest-path-on-chip-spec (chip-spec start-node target-node)
   "Returns a sequence of qubit indices that reach from START-NODE to TARGET-NODE on CHIP-SPEC, or NIL if no path can be found.
 
